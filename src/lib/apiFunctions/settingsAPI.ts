@@ -12,3 +12,8 @@ export const createIncomeSource = async (payload) => {
     const res = await fetchWrapper.post(url, payload)
     return await res;
 }
+
+export const updateIncomeSource = async (id, payload: object) => {
+    const res = await fetchWrapper.put(`${url}/${id}`, payload);
+    return await res;
+}
