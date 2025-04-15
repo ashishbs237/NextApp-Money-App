@@ -1,9 +1,9 @@
-import connectDB from '@/lib/dbConnect';
+import connectDB from '@/lib/connectDB';
 import IncomeSourceSchema from '@/models/IncomeSource';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    console.log("asdasdsadasdasdasdas")
+  console.log("asdasdsadasdasdasdas")
   await connectDB();
 
   if (req.method === 'GET') {

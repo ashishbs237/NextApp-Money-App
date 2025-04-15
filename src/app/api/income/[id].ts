@@ -1,4 +1,4 @@
-import connectDB from '@/lib/dbConnect';
+import connectDB from '@/lib/connectDB';
 import IncomeSourceSchema from '@/models/IncomeSource';
 import { NextApiRequest, NextApiResponse } from 'next';
 

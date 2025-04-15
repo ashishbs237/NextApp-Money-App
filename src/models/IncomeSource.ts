@@ -1,9 +1,12 @@
 import mongoose from 'mongoose';
 
-const IncomeSourceSchema = new mongoose.Schema({
-  source: { type: String, required: true },
-  note: { type: String }
-});
+const IncomeSourceSchema = new mongoose.Schema(
+  {
+    source: { type: String, required: true },
+    note: { type: String },
+  },
+  { timestamps: true }
+);
 
 export default mongoose.models.IncomeSource ||
-  mongoose.model('IncomeSourceSchema', IncomeSourceSchema);
+  mongoose.model('IncomeSource', IncomeSourceSchema);

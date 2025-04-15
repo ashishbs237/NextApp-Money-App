@@ -11,7 +11,7 @@ async function handleResponse(response) {
     throw new Error(error);
   }
 
-  return data;
+  return data.data;
 }
 
 const fetchWrapper = {

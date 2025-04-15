@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/moneymap';
+const MONGODB_URI = process.env.NEXT_APP_MONGODB_URI || 'mongodb://127.0.0.1:27017/moneymap';
+console.log("MONGODB_URI : ", MONGODB_URI)
 
 export default async function connectDB() {
   if (mongoose.connection.readyState >= 1) return;
