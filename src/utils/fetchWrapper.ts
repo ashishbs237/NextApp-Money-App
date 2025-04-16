@@ -10,7 +10,6 @@ async function handleResponse(response) {
     const error = data?.message || response.statusText;
     throw new Error(error);
   }
-
   return data.data;
 }
 
@@ -35,9 +34,10 @@ const fetchWrapper = {
     }).then(handleResponse),
 
   delete: (url, headers = {}) =>
-    fetch(`${API_BASE_URL}${url}`, { method: "DELETE", headers }).then(
-      handleResponse
-    ),
+    fetch(`${API_BASE_URL}${url}`, {
+      method: "DELETE",
+      headers,
+    }).then(handleResponse),
 };
 
 export default fetchWrapper;

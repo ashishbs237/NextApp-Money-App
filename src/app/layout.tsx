@@ -1,3 +1,4 @@
+import { ToastContainer } from 'react-toastify';
 import './globals.css';
 import Link from 'next/link';
 
@@ -31,6 +32,19 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {/* <header className="mb-6">
                 <h2 className="text-2xl font-semibold">Welcome to MoneyMap</h2>
               </header> */}
+              <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+                // transition={Bounce}
+              />
               <section className="space-y-6">
                 {children}
               </section>
@@ -46,9 +60,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 function SidebarLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
-    href={href}
-    className="px-3 py-2 rounded-lg hover:bg-[var(--sidebar-link-hover)] transition-colors duration-150"
-  >
+      href={href}
+      className="px-3 py-2 rounded-lg hover:bg-[var(--sidebar-link-hover)] transition-colors duration-150"
+    >
       {label}
     </Link>
   );

@@ -1,15 +1,26 @@
 import React, { useState } from 'react';
 import { Plus, Save } from "lucide-react";
 
-const AddEditFinanceDataForm = ({ onSubmit, ref, editingId }) => {
-    const [data, setData] = useState({
-        label: '',
-        note: ''
+interface Data {
+    label: string;
+    note: string
+}
+
+const AddEditFinanceDataForm = ({ onSubmit, ref, editData }) => {
+    const [data, setData] = useState<Data>({
+        label: editData?.data?.label || '',
+        note: editData?.data?.note || ''
     });
 
     const handleChange = (key: string, value: string) => {
         setData({ ...data, [key]: value })
     }
+
+    const handleSubmit = () => {
+        onSubmit(data);
+        setData({ label: '', note: '' })
+    }
+
     return (
         <div className="mb-8 space-y-4">
             <div className="flex gap-4">
@@ -31,10 +42,10 @@ const AddEditFinanceDataForm = ({ onSubmit, ref, editingId }) => {
                 />
             </div>
             <button
-                onClick={onSubmit(data)}
+                onClick={() => handleSubmit()}
                 className="bg-[var(--accent)] text-white px-6 py-2 rounded hover:opacity-90 flex items-center gap-2"
             >
-                {editingId ? (
+                {editData ? (
                     <>
                         <Save size={16} /> Update Source
                     </>
