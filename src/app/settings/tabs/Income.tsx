@@ -4,10 +4,9 @@ import { createIncomeSource, getIncomeSource, updateIncomeSource } from '@/lib/a
 import fetchWrapper from '@/utils/fetchWrapper';
 import { useEffect, useRef, useState } from 'react';
 import { Pencil, Trash2 } from "lucide-react"; // <-- Lucide icons
-import { Plus, Save } from "lucide-react";
-import Loader from '@/components/common/Loader';
 import BlockingLoader from '@/components/common/BlockingLoader';
 import ConfirmationDialog from '@/components/common/ConfirmationDialog';
+import AddEditFinanceDataForm from '@/components/common/AddEditFinanceDataForm';
 
 interface IncomeSource {
   _id?: string;
@@ -46,13 +45,12 @@ export default function IncomeSettings() {
 
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async ({ label, note }) => {
 
     // check duplication
     const isDuplicate = incomeSources.some(
       (item) =>
-        item.source.toLowerCase() === source.toLowerCase() &&
+        item.source.toLowerCase() === label.toLowerCase() &&
         item._id !== editingId
     );
 
@@ -67,9 +65,9 @@ export default function IncomeSettings() {
     }
 
     if (editingId) {
-      await updateIncomeSource(editingId, { source, note });
+      await updateIncomeSource(editingId, { source: label, note });
     } else {
-      await await createIncomeSource({ source, note });
+      await await createIncomeSource({ source: label, note });
     }
     setSource('');
     setNote('');
@@ -92,41 +90,11 @@ export default function IncomeSettings() {
     <div className='relative'>
       <h1 className="text-2xl font-bold mb-6">Manage Income Sources</h1>
 
-      <form onSubmit={handleSubmit} className="mb-8 space-y-4">
-        <div className="flex gap-4">
-          <input
-            type="text"
-            ref={sourceInputRef}
-            placeholder="Income Source"
-            value={source}
-            onChange={(e) => setSource(e.target.value)}
-            required
-            className="px-4 py-2 border border-gray-300 rounded-md w-1/2"
-          />
-          <input
-            type="text"
-            placeholder="Note"
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-md w-1/2"
-          />
-        </div>
-        <button
-          type="submit"
-          className="bg-[var(--accent)] text-white px-6 py-2 rounded hover:opacity-90 flex items-center gap-2"
-        >
-          {editingId ? (
-            <>
-              <Save size={16} /> Update Source
-            </>
-          ) : (
-            <>
-              <Plus size={16} /> Add Source
-            </>
-          )}
-        </button>
-
-      </form>
+      <AddEditFinanceDataForm
+        editingId={action?.data?._id}
+        ref={sourceInputRef}
+        onSubmit={handleSubmit}
+      />
 
       <table className="w-full text-left border border-gray-200">
         <thead className="bg-gray-100 dark:bg-gray-800">
