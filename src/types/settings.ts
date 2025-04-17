@@ -1,5 +1,5 @@
 export interface IFinanceLabel {
   _id: string;
-  source: string;
+  label: string;
   note: string;
 }

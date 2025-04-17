@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/connectDB";
-import IncomeSource from "@/models/IncomeLabel";
+import IncomeLabel from "@/models/IncomeLabel";
 
 export async function PUT(
   request: Request,
@@ -11,30 +11,30 @@ export async function PUT(
   try {
     const { id } = params;
     const body = await request.json();
-    const { source, note } = body;
+    const { label, note } = body;
 
-    if (!source) {
+    if (!label) {
       return NextResponse.json(
-        { error: "Source is required" },
+        { error: "Label is required" },
         { status: 400 }
       );
     }
 
-    const updated = await IncomeSource.findByIdAndUpdate(
+    const updated = await IncomeLabel.findByIdAndUpdate(
       id,
-      { source, note },
+      { label: label, note },
       { new: true }
     );
 
     if (!updated) {
       return NextResponse.json(
-        { error: "Income source not found" },
+        { error: "Income label not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json(
-      { message: "Income source updated", data: updated },
+      { message: "Income label updated", data: updated },
       { status: 200 }
     );
   } catch (err: unknown) {
@@ -56,17 +56,17 @@ export async function DELETE(
   try {
     const { id } = params;
 
-    const deleted = await IncomeSource.findByIdAndDelete(id);
+    const deleted = await IncomeLabel.findByIdAndDelete(id);
 
     if (!deleted) {
       return NextResponse.json(
-        { error: "Income source not found" },
+        { error: "Income label not found" },
         { status: 404 }
       );
     }
 
     return NextResponse.json({
-      data: { ...deleted, message: "Income source deleted" },
+      data: { ...deleted, message: "Income label deleted" },
       status: 200,
     });
   } catch (err: unknown) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Plus, Save } from "lucide-react";
 
 interface Data {
@@ -7,10 +7,20 @@ interface Data {
 }
 
 const AddEditFinanceDataForm = ({ onSubmit, ref, editData }) => {
+    console.log("editData :L ", editData)
     const [data, setData] = useState<Data>({
-        label: editData?.data?.label || '',
-        note: editData?.data?.note || ''
+        label: editData?.label || '',
+        note: editData?.note || ''
     });
+
+    useEffect(() => {
+        if (editData) {
+            setData({
+                label: editData?.label,
+                note: editData?.note
+            });
+        }
+    }, [editData]);
 
     const handleChange = (key: string, value: string) => {
         setData({ ...data, [key]: value })

@@ -14,18 +14,16 @@ import SKHeader from '@/components/common/Header';
 
 export default function IncomeSettings() {
   const { successToast, errorToast } = useToast();
-  const sourceInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [labels, setLabels] = useState<IFinanceLabel[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [loadingCount, setLoadingCount] = useState(0);
   const [action, setAction] = useState<IConfirmatinDialogAction<IFinanceLabel> | null>();
 
-
   useEffect(() => {
-    fetchSources();
+    fetchLabels();
   }, []);
 
-  const fetchSources = async () => {
+  const fetchLabels = async () => {
     try {
       setLoadingCount((prev) => prev + 1);
       const res = await getIncomeLabels();
@@ -43,8 +41,8 @@ export default function IncomeSettings() {
     // check duplication
     const isDuplicate = labels.some(
       (item) =>
-        item.source.toLowerCase() === label.toLowerCase() &&
-        item._id !== editingId
+        item.label.toLowerCase() === label.toLowerCase() &&
+        item._id !== action?.data?._id
     );
 
     if (isDuplicate) {
@@ -55,8 +53,8 @@ export default function IncomeSettings() {
     try {
       setLoadingCount((count) => count + 1);
       let res: ApiResponse<IFinanceLabel>;
-      if (editingId) {
-        res = await updateIncomeLabel(editingId, { label, note });
+      if (action?.data?._id) {
+        res = await updateIncomeLabel(action?.data?._id, { label, note });
       } else {
         res = await createIncomeLabel({ label, note });
       }
@@ -66,8 +64,7 @@ export default function IncomeSettings() {
     } finally {
       setLoadingCount((count) => count - 1);
     }
-    setEditingId(null);
-    fetchSources();
+    fetchLabels();
   };
 
 
@@ -81,23 +78,23 @@ export default function IncomeSettings() {
     } finally {
       setLoadingCount((count) => count - 1)
     }
-    fetchSources();
+    fetchLabels();
   };
 
   const handleOk = () => {
     setAction(null)
     setTimeout(() => {
-      sourceInputRef.current?.focus();
+      inputRef.current?.focus();
     }, 0);
   }
 
   return (
     <div className='relative'>
-      <SKHeader text="Manage Income Sources" />
+      <SKHeader text="Manage Income Labels" />
 
       <AddEditFinanceDataForm
         editData={action?.command === 'edit' && action?.data}
-        ref={sourceInputRef}
+        ref={inputRef}
         onSubmit={handleSubmit}
       />
 
@@ -119,7 +116,7 @@ export default function IncomeSettings() {
         onClose={() => handleOk()}
         open={action?.command === 'info'}
         variant='info'
-        information="Income source already exists."
+        information="Income label already exists."
       />
 
     </div>

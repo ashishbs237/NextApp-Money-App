@@ -34,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </header> */}
               <ToastContainer
                 position="top-right"
-                autoClose={2000}
+                autoClose={1500}
                 hideProgressBar={false}
                 newestOnTop={false}
                 closeOnClick={false}
@@ -43,7 +43,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 draggable
                 pauseOnHover
                 theme="light"
-                // transition={Bounce}
+              // transition={Bounce}
               />
               <section className="space-y-6">
                 {children}

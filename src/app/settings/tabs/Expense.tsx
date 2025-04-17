@@ -16,15 +16,14 @@ export default function ExpenseSettings() {
   const { successToast, errorToast } = useToast();
   const sourceInputRef = useRef<HTMLInputElement>(null);
   const [labels, setLabels] = useState<IFinanceLabel[]>([]);
-  const [editingId, setEditingId] = useState<string | null>(null);
   const [loadingCount, setLoadingCount] = useState(0);
   const [action, setAction] = useState<IConfirmatinDialogAction<IFinanceLabel> | null>();
 
   useEffect(() => {
-    fetchSources();
+    fetchLabels();
   }, []);
 
-  const fetchSources = async () => {
+  const fetchLabels = async () => {
     try {
       setLoadingCount((prev) => prev + 1);
       const res = await getExpenseLabels();
@@ -42,8 +41,8 @@ export default function ExpenseSettings() {
     // check duplication
     const isDuplicate = labels.some(
       (item) =>
-        item.source.toLowerCase() === label.toLowerCase() &&
-        item._id !== editingId
+        item.label.toLowerCase() === label.toLowerCase() &&
+        item._id !== action?.data?._id
     );
 
     if (isDuplicate) {
@@ -54,8 +53,8 @@ export default function ExpenseSettings() {
     try {
       setLoadingCount((count) => count + 1);
       let res: ApiResponse<IFinanceLabel>;
-      if (editingId) {
-        res = await updateExpenseLabel(editingId, { label, note });
+      if (action?.data?._id) {
+        res = await updateExpenseLabel(action?.data?._id, { label, note });
       } else {
         res = await createExpenseLabel({ label, note });
       }
@@ -65,8 +64,7 @@ export default function ExpenseSettings() {
     } finally {
       setLoadingCount((count) => count - 1);
     }
-    setEditingId(null);
-    fetchSources();
+    fetchLabels();
   };
 
 
@@ -80,7 +78,7 @@ export default function ExpenseSettings() {
     } finally {
       setLoadingCount((count) => count - 1)
     }
-    fetchSources();
+    fetchLabels();
   };
 
   const handleOk = () => {
@@ -118,7 +116,7 @@ export default function ExpenseSettings() {
         onClose={() => handleOk()}
         open={action?.command === 'info'}
         variant='info'
-        information="Income source already exists."
+        information="Income label already exists."
       />
 
     </div>
