@@ -1,43 +1,43 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/connectDB";
-import IncomeSource from "@/models/IncomeSource";
+import IncomeLabel from "@/models/IncomeLabel";
 
 // GET /api/settings/income-source
 export async function GET() {
   await dbConnect();
 
   try {
-    const sources = await IncomeSource.find().sort({ source: 1 }); // sort alphabetically
-    return NextResponse.json({ data: sources }, { status: 200 });
+    const labels = await IncomeLabel.find().sort({ label: 1 }); // sort alphabetically
+    return NextResponse.json({ data: labels }, { status: 200 });
   } catch (err: unknown) {
     const errorMessage =
       err instanceof Error ? err.message : "Unknown error occurred";
     return NextResponse.json(
-      { error: "Failed to fetch income source", details: errorMessage },
+      { error: "Failed to fetch income labels", details: errorMessage },
       { status: 500 }
     );
   }
 }
 
-// POST /api/settings/income-source
+// POST /api/settings/income-labels
 export async function POST(request: Request) {
   await dbConnect();
 
   try {
     const body = await request.json();
-    const { source, note } = body;
+    const { label, note } = body;
 
-    if (!source) {
+    if (!label) {
       return NextResponse.json(
-        { error: "Source is required" },
+        { error: "Label is required" },
         { status: 400 }
       );
     }
 
-    const newSource = await IncomeSource.create({ source, note });
+    const newLabel = await IncomeLabel.create({ label, note });
 
     return NextResponse.json(
-      { data: { ...newSource, message: "Income source created" } },
+      { data: { ...newLabel, message: "Income label created" } },
       { status: 201 }
     );
   } catch (err: unknown) {

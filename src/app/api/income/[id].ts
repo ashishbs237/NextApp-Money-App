@@ -1,5 +1,5 @@
 import connectDB from '@/lib/connectDB';
-import IncomeSourceSchema from '@/models/IncomeSource';
+import IncomeSourceSchema from '@/models/IncomeLabel';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

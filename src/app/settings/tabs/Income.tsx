@@ -1,41 +1,25 @@
 'use client';
 
-import { createIncomeSource, getIncomeSource, updateIncomeSource } from '@/lib/apiFunctions/settingsAPI';
-import fetchWrapper from '@/utils/fetchWrapper';
+import { createIncomeLabel, deleteIncomeLabel, getIncomeLabels, updateIncomeLabel } from '@/lib/apiFunctions/settingsAPI';
 import { useEffect, useRef, useState } from 'react';
-import { Pencil, Trash2 } from "lucide-react"; // <-- Lucide icons
 import BlockingLoader from '@/components/common/BlockingLoader';
 import ConfirmationDialog from '@/components/common/ConfirmationDialog';
 import AddEditFinanceDataForm from '@/components/common/AddEditFinanceDataForm';
 import { toast } from 'react-toastify';
 import { useToast } from '@/hooks/useToast';
-
-
-interface ApiResponse<T> {
-  message: string;
-  data: T;
-}
-
-interface IncomeSource {
-  _id: string;
-  source: string;
-  note: string;
-}
-
-
-
-interface Action {
-  data?: IncomeSource;  // Using the IncomeSource type for the data field
-  command?: 'default' | 'edit' | 'delete';  // Command can only be 'edit' or 'delete'
-}
+import FinanceDataList from '@/components/common/FinanceDataList';
+import { IFinanceLabel } from "@/types/settings"
+import { ApiResponse, IConfirmatinDialogAction } from "@/types/common"
+import SKHeader from '@/components/common/Header';
 
 export default function IncomeSettings() {
   const { successToast, errorToast } = useToast();
   const sourceInputRef = useRef<HTMLInputElement>(null);
-  const [incomeSources, setIncomeSources] = useState<IncomeSource[]>([]);
+  const [labels, setLabels] = useState<IFinanceLabel[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loadingCount, setLoadingCount] = useState(0);
-  const [action, setAction] = useState<Action | null>();
+  const [action, setAction] = useState<IConfirmatinDialogAction<IFinanceLabel> | null>();
+
 
   useEffect(() => {
     fetchSources();
@@ -44,8 +28,8 @@ export default function IncomeSettings() {
   const fetchSources = async () => {
     try {
       setLoadingCount((prev) => prev + 1);
-      const res = await getIncomeSource();
-      setIncomeSources(res);
+      const res = await getIncomeLabels();
+      setLabels(res);
     } catch (err) {
       console.error(err)
     } finally {
@@ -57,28 +41,24 @@ export default function IncomeSettings() {
   const handleSubmit = async ({ label, note }) => {
 
     // check duplication
-    const isDuplicate = incomeSources.some(
+    const isDuplicate = labels.some(
       (item) =>
         item.source.toLowerCase() === label.toLowerCase() &&
         item._id !== editingId
     );
 
     if (isDuplicate) {
-      alert("Income source already exists.");
-      // Refocus input after alert
-      setTimeout(() => {
-        sourceInputRef.current?.focus();
-      }, 0);
+      setAction({ command: 'info' })
       return;
     }
 
     try {
       setLoadingCount((count) => count + 1);
-      let res: ApiResponse<IncomeSource>;
+      let res: ApiResponse<IFinanceLabel>;
       if (editingId) {
-        res = await updateIncomeSource(editingId, { source: label, note });
+        res = await updateIncomeLabel(editingId, { label, note });
       } else {
-        res = await createIncomeSource({ source: label, note });
+        res = await createIncomeLabel({ label, note });
       }
       successToast(res?.message)
     } catch (err) {
@@ -90,10 +70,11 @@ export default function IncomeSettings() {
     fetchSources();
   };
 
+
   const handleDelete = async () => {
     try {
       setLoadingCount((count) => count + 1)
-      const res: ApiResponse<IncomeSource> = await fetchWrapper.delete(`/api/settings/income-source/${action?.data?._id}`);
+      const res: ApiResponse<IFinanceLabel> = await deleteIncomeLabel(action?.data?._id);
       toast.success(res.message)
     } catch (err: unknown) {
       console.error(err)
@@ -103,9 +84,16 @@ export default function IncomeSettings() {
     fetchSources();
   };
 
+  const handleOk = () => {
+    setAction(null)
+    setTimeout(() => {
+      sourceInputRef.current?.focus();
+    }, 0);
+  }
+
   return (
     <div className='relative'>
-      <h1 className="text-2xl font-bold mb-6">Manage Income Sources</h1>
+      <SKHeader text="Manage Income Sources" />
 
       <AddEditFinanceDataForm
         editData={action?.command === 'edit' && action?.data}
@@ -113,45 +101,11 @@ export default function IncomeSettings() {
         onSubmit={handleSubmit}
       />
 
-      <div className="max-h-96 overflow-y-auto border border-gray-200 rounded">
-        <table className="w-full text-left border-collapse">
-          <thead className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
-            <tr>
-              <th className="p-3 border bg-gray-100 dark:bg-gray-800">#</th>
-              <th className="p-3 border bg-gray-100 dark:bg-gray-800">Source</th>
-              <th className="p-3 border bg-gray-100 dark:bg-gray-800">Note</th>
-              <th className="p-3 border text-center w-0 bg-gray-100 dark:bg-gray-800">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {incomeSources.map((item, idx) => (
-              <tr key={item._id} className="hover:bg-gray-50">
-                <td className="p-3 border">{idx + 1}</td>
-                <td className="p-3 border">{item.source}</td>
-                <td className="p-3 border">{item.note}</td>
-                <td className="p-2 border text-center">
-                  <div className="flex justify-center items-center gap-2">
-                    <button
-                      onClick={() => setAction({ command: 'edit', data: item })}
-                      className="text-blue-600 hover:opacity-80 p-1 cursor-pointer"
-                      title="Edit"
-                    >
-                      <Pencil size={16} />
-                    </button>
-                    <button
-                      onClick={() => item._id && setAction({ command: 'delete', data: item })}
-                      className="text-red-600 hover:opacity-80 p-1 cursor-pointer"
-                      title="Delete"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <FinanceDataList
+        rowData={labels}
+        onEdit={(item) => setAction({ command: 'edit', data: item })}
+        onDelete={(item) => setAction({ command: 'delete', data: item })}
+      />
 
       <BlockingLoader show={loadingCount > 0} />
       <ConfirmationDialog
@@ -160,6 +114,14 @@ export default function IncomeSettings() {
         open={action?.command === 'delete'}
         variant='delete'
       />
+
+      <ConfirmationDialog
+        onClose={() => handleOk()}
+        open={action?.command === 'info'}
+        variant='info'
+        information="Income source already exists."
+      />
+
     </div>
   );
 }

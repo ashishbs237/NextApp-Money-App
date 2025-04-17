@@ -1,20 +1,38 @@
 import fetchWrapper from "@/utils/fetchWrapper";
 
-const url = "/api/settings/income-source";
+const incomeSettingsUrl = "/api/settings/income";
+const expenseSettingsUrl = "/api/settings/expense";
 
-// Income Source APIs
-export const getIncomeSource = () => {
-  return fetchWrapper.get(url);
+// Income Label APIs
+export const getIncomeLabels = () => {
+  return fetchWrapper.get(incomeSettingsUrl);
 };
 
-export const createIncomeSource = (payload) => {
-  return fetchWrapper.post(url, payload);
+export const createIncomeLabel = (payload) => {
+  return fetchWrapper.post(incomeSettingsUrl, payload);
 };
 
-export const updateIncomeSource = (id, payload: object) => {
-  return fetchWrapper.put(`${url}/${id}`, payload);
+export const updateIncomeLabel = (id, payload: object) => {
+  return fetchWrapper.put(`${incomeSettingsUrl}/${id}`, payload);
 };
 
-export const deleteIncomeSource = (id) => {
-  return fetchWrapper.delete(`${url}/${id}`);
+export const deleteIncomeLabel = (id) => {
+  return fetchWrapper.delete(`${incomeSettingsUrl}/${id}`);
+};
+
+// Expense Source APIs
+export const getExpenseLabels = () => {
+  return fetchWrapper.get(expenseSettingsUrl);
+};
+
+export const createExpenseLabel = (payload) => {
+  return fetchWrapper.post(expenseSettingsUrl, payload);
+};
+
+export const updateExpenseLabel = (id, payload: object) => {
+  return fetchWrapper.put(`${expenseSettingsUrl}/${id}`, payload);
+};
+
+export const deleteExpenseLabel = (id) => {
+  return fetchWrapper.delete(`${expenseSettingsUrl}/${id}`);
 };

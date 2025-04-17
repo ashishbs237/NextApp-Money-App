@@ -27,7 +27,7 @@ const AddEditFinanceDataForm = ({ onSubmit, ref, editData }) => {
                 <input
                     type="text"
                     ref={ref}
-                    placeholder="Income Source"
+                    placeholder="Label"
                     value={data.label}
                     onChange={(e) => handleChange('label', e.target.value)}
                     required
@@ -47,11 +47,11 @@ const AddEditFinanceDataForm = ({ onSubmit, ref, editData }) => {
             >
                 {editData ? (
                     <>
-                        <Save size={16} /> Update Source
+                        <Save size={16} /> Update
                     </>
                 ) : (
                     <>
-                        <Plus size={16} /> Add Source
+                        <Plus size={16} /> Add
                     </>
                 )}
             </button>

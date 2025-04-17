@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/connectDB";
-import IncomeSource from "@/models/IncomeSource";
+import IncomeSource from "@/models/IncomeLabel";
 
 export async function PUT(
   request: Request,
