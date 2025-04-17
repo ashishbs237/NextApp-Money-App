@@ -63,6 +63,7 @@ export default function InvestmentSettings() {
       errorToast(err);
     } finally {
       setLoadingCount((count) => count - 1);
+      inputRef.current?.focus();
     }
     fetchLabels();
   };

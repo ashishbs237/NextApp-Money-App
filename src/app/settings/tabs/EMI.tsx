@@ -33,7 +33,6 @@ export default function EMISettings() {
     } finally {
       setLoadingCount((prev) => prev - 1);
     }
-
   };
 
   const handleSubmit = async ({ label, note }) => {
@@ -63,6 +62,7 @@ export default function EMISettings() {
       errorToast(err);
     } finally {
       setLoadingCount((count) => count - 1);
+      inputRef.current?.focus();
     }
     fetchLabels();
   };

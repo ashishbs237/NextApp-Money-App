@@ -3,7 +3,7 @@ import React from 'react'
 
 const FinanceDataList = ({ rowData, onEdit, onDelete }) => {
   return (
-    <div className="max-h-96 overflow-y-auto border border-gray-200 rounded">
+    <div className="h-120 overflow-y-auto border border-gray-200 rounded">
       <table className="w-full text-left border-collapse">
         <thead className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
           <tr>
@@ -43,7 +43,7 @@ const FinanceDataList = ({ rowData, onEdit, onDelete }) => {
           ) : (
             <tr>
               <td colSpan={4} className="text-center p-4 text-gray-500">
-                No Records Available
+                No records available
               </td>
             </tr>
           )}

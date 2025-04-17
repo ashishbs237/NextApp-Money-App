@@ -7,7 +7,6 @@ interface Data {
 }
 
 const AddEditFinanceDataForm = ({ onSubmit, ref, editData }) => {
-    console.log("editData :L ", editData)
     const [data, setData] = useState<Data>({
         label: editData?.label || '',
         note: editData?.note || ''
@@ -50,22 +49,21 @@ const AddEditFinanceDataForm = ({ onSubmit, ref, editData }) => {
                     onChange={(e) => handleChange('note', e.target.value)}
                     className="px-4 py-2 border border-gray-300 rounded-md w-1/2"
                 />
+                <button
+                    onClick={() => handleSubmit()}
+                    className="bg-[var(--accent)] text-white px-6 py-2 rounded hover:opacity-90 flex items-center gap-2"
+                >
+                    {editData ? (
+                        <>
+                            <Save size={16} /> Update
+                        </>
+                    ) : (
+                        <>
+                            <Plus size={16} /> Add
+                        </>
+                    )}
+                </button>
             </div>
-            <button
-                onClick={() => handleSubmit()}
-                className="bg-[var(--accent)] text-white px-6 py-2 rounded hover:opacity-90 flex items-center gap-2"
-            >
-                {editData ? (
-                    <>
-                        <Save size={16} /> Update
-                    </>
-                ) : (
-                    <>
-                        <Plus size={16} /> Add
-                    </>
-                )}
-            </button>
-
         </div>
     )
 }

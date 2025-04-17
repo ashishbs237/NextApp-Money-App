@@ -14,7 +14,7 @@ import SKHeader from '@/components/common/Header';
 
 export default function ExpenseSettings() {
   const { successToast, errorToast } = useToast();
-  const sourceInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
   const [labels, setLabels] = useState<IFinanceLabel[]>([]);
   const [loadingCount, setLoadingCount] = useState(0);
   const [action, setAction] = useState<IConfirmatinDialogAction<IFinanceLabel> | null>();
@@ -63,6 +63,7 @@ export default function ExpenseSettings() {
       errorToast(err);
     } finally {
       setLoadingCount((count) => count - 1);
+      inputRef.current?.focus();
     }
     fetchLabels();
   };
@@ -84,7 +85,7 @@ export default function ExpenseSettings() {
   const handleOk = () => {
     setAction(null)
     setTimeout(() => {
-      sourceInputRef.current?.focus();
+      inputRef.current?.focus();
     }, 0);
   }
 
@@ -94,7 +95,7 @@ export default function ExpenseSettings() {
 
       <AddEditFinanceDataForm
         editData={action?.command === 'edit' && action?.data}
-        ref={sourceInputRef}
+        ref={inputRef}
         onSubmit={handleSubmit}
       />
 

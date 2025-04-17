@@ -38,7 +38,6 @@ export default function IncomeSettings() {
 
   const handleSubmit = async ({ label, note }) => {
 
-    // check duplication
     const isDuplicate = labels.some(
       (item) =>
         item.label.toLowerCase() === label.toLowerCase() &&
@@ -63,6 +62,7 @@ export default function IncomeSettings() {
       errorToast(err);
     } finally {
       setLoadingCount((count) => count - 1);
+      inputRef.current?.focus();
     }
     fetchLabels();
   };
