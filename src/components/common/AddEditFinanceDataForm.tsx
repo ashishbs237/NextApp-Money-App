@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Save } from "lucide-react";
-import SKTextInput from '../elements/SKTextInput';
 
 interface Data {
     label: string;
@@ -43,9 +42,6 @@ const AddEditFinanceDataForm = ({ onSubmit, ref, editData }) => {
                     required
                     className="px-2 py-1 border border-gray-300 rounded-md w-1/2"
                 />
-                <SKTextInput
-                tabType='income'
-                 />
                 <input
                     type="text"
                     placeholder="Note"
@@ -55,7 +51,7 @@ const AddEditFinanceDataForm = ({ onSubmit, ref, editData }) => {
                 />
                 <button
                     onClick={() => handleSubmit()}
-                    className="bg-[var(--accent)] text-white px-6 py-2 rounded hover:opacity-90 flex items-center gap-2"
+                    className="bg-[var(--accent)] text-white px-6 py-2 rounded hover:opacity-90 flex items-center gap-2 cursor-pointer"
                 >
                     {editData ? (
                         <>

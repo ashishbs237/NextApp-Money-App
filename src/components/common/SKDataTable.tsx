@@ -11,19 +11,20 @@ export type ColumnDefinition = {
     renderCell?: (row: RowData) => React.ReactNode;
 };
 
-
 type SKDataTableProps = {
-    columns: ColumnDefinition[];  // Column definitions
-    rows: RowData[];  // Actual data to be displayed
+    columns: ColumnDefinition[];
+    rows: RowData[];
     totalSelectedRows?: number;
     onDeleteSelected?: (ids: (string | number)[]) => void;
     checkBoxSelection?: boolean;
+    alternateRowColors?: [string, string]; // [even, odd]
 };
 
 const SKDataTable: React.FC<SKDataTableProps> = ({
     columns,
     rows,
-    checkBoxSelection = false
+    checkBoxSelection = false,
+    alternateRowColors = ['bg-white', 'bg-gray-50']
 }) => {
     const [selectedRows, setSelectedRows] = useState<Set<string | number>>(new Set());
 
@@ -39,12 +40,6 @@ const SKDataTable: React.FC<SKDataTableProps> = ({
 
     return (
         <div className="w-full bg-white rounded-lg shadow-md p-4">
-            {/* Table Header */}
-            <div className="flex justify-between items-center">
-                <div className="text-xl font-semibold">SKDataTable</div>
-
-            </div>
-
             {/* Table */}
             <div className="overflow-x-auto mt-4">
                 <table className="w-full table-auto border-collapse">
@@ -64,7 +59,6 @@ const SKDataTable: React.FC<SKDataTableProps> = ({
                                     />
                                 </th>
                             }
-
                             {columns.map((column, index) => (
                                 <th key={index} className="px-4 py-2 font-medium">
                                     {column.label}
@@ -72,38 +66,43 @@ const SKDataTable: React.FC<SKDataTableProps> = ({
                             ))}
                         </tr>
                     </thead>
-                    <tbody className={'max-h-64 overflow-y-scroll'}>
-                        {rows.map((row) => (
-                            <tr
-                                key={row._id}
-                                className={`border-b ${selectedRows.has(row._id) ? 'bg-gray-200' : ''}`}
-                            >
-                                {
-                                    checkBoxSelection &&
-                                    <td className="px-4 py-2">
-                                        <input
-                                            type="checkbox"
-                                            checked={selectedRows.has(row._id)}
-                                            onChange={() => handleSelectRow(row._id)}
-                                        />
-                                    </td>
-                                }
-                                {columns.map((column) => (
-                                    <td key={column.accessor} className="px-4 py-2">
-                                        {column.renderCell ? column.renderCell(row) : row[column.accessor]}
+                    <tbody>
+                        {rows.map((row, index) => {
+                            const isSelected = selectedRows.has(row._id);
+                            const rowColor = isSelected
+                                ? 'bg-gray-200'
+                                : index % 2 === 0
+                                    ? alternateRowColors[0]
+                                    : alternateRowColors[1];
 
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
+                            return (
+                                <tr key={row._id} className={`border-b ${rowColor}`}>
+                                    {
+                                        checkBoxSelection &&
+                                        <td className="px-4 py-2">
+                                            <input
+                                                type="checkbox"
+                                                checked={isSelected}
+                                                onChange={() => handleSelectRow(row._id)}
+                                            />
+                                        </td>
+                                    }
+                                    {columns.map((column) => (
+                                        <td key={column.accessor} className="px-4 py-2">
+                                            {column.renderCell ? column.renderCell(row) : row[column.accessor]}
+                                        </td>
+                                    ))}
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
 
             {/* Footer */}
             <div className="flex justify-between items-center mt-4">
-                <div className="flex gap-2">
-                    <div className="text-sm">Total Rows: {rows.length}</div>
+                <div className="flex gap-2 text-sm">
+                    <span>Total Rows: {rows.length}</span>
                 </div>
             </div>
         </div>

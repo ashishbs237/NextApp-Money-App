@@ -19,7 +19,7 @@ export interface IIncomeItem {
   _id?: string | number;
   label?: string;
   amount?: string;
-  customLabel?: string;
+  customLabel?: string | undefined;
   yearlyIncrement?: number;
 }
 

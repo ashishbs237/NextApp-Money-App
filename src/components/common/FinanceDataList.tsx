@@ -7,20 +7,20 @@ const FinanceDataList = ({ rowData, onEdit, onDelete }) => {
       <table className="w-full text-left border-collapse">
         <thead className="bg-gray-100 dark:bg-gray-800 sticky top-0 z-10">
           <tr>
-            <th className="p-3 border bg-gray-100 dark:bg-gray-800">#</th>
-            <th className="p-3 border bg-gray-100 dark:bg-gray-800">Label</th>
-            <th className="p-3 border bg-gray-100 dark:bg-gray-800">Note</th>
-            <th className="p-3 border text-center w-0 bg-gray-100 dark:bg-gray-800">Actions</th>
+            <th className="p-2 border bg-gray-100 dark:bg-gray-800">#</th>
+            <th className="p-2 border bg-gray-100 dark:bg-gray-800">Label</th>
+            <th className="p-2 border bg-gray-100 dark:bg-gray-800">Note</th>
+            <th className="p-2 border text-center w-0 bg-gray-100 dark:bg-gray-800">Actions</th>
           </tr>
         </thead>
         <tbody>
           {rowData.length > 0 ? (
             rowData.map((item, idx) => (
               <tr key={item._id} className="hover:bg-gray-50">
-                <td className="p-3 border">{idx + 1}</td>
-                <td className="p-3 border">{item.label}</td>
-                <td className="p-3 border">{item.note}</td>
-                <td className="p-2 border text-center">
+                <td className="p-1.5 border">{idx + 1}</td>
+                <td className="p-1.5 border">{item.label}</td>
+                <td className="p-1.5 border">{item.note}</td>
+                <td className="p-1.5 border text-center">
                   <div className="flex justify-center items-center gap-2">
                     <button
                       onClick={() => onEdit(item)}
