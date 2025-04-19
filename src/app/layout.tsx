@@ -12,11 +12,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="bg-[var(--background)] text-[var(--foreground)] antialiased">
       <body className="bg-[var(--background)] text-[var(--foreground)]">
-        <div className="flex justify-center min-h-screen px-4 sm:px-8 py-6">
+        <div className="flex justify-center min-h-screen px-2 sm:px-8 py-3">
           <div className="w-full max-w-[1280px] flex overflow-hidden rounded-2xl shadow-lg border border-gray-200 bg-[var(--background)] transition-all">
 
             {/* Sidebar */}
-            <aside className="w-64 bg-[var(--sidebar-bg)] text-white flex flex-col p-6 space-y-6">
+            <aside className="w-64 bg-[var(--sidebar-bg)] text-white flex flex-col p-4 space-y-6">
               <h1 className="text-2xl font-bold tracking-wide">💰 MoneyMap</h1>
               <nav className="flex flex-col gap-3">
                 <SidebarLink href="/dashboard" label="Dashboard" />
@@ -29,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </aside>
 
             {/* Main Content */}
-            <main className="flex-1 bg-[var(--background)] p-6 sm:p-10 overflow-y-auto">
+            <main className="flex-1 bg-[var(--background)] p-3 sm:p-5 overflow-y-auto">
               {/* <header className="mb-6">
                 <h2 className="text-2xl font-semibold">Welcome to MoneyMap</h2>
               </header> */}
@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
               // transition={Bounce}
               />
-              <section className="space-y-6">
+              <section className="space-y-3">
                 {children}
               </section>
             </main>

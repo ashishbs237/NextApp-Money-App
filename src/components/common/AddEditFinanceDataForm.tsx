@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Plus, Save } from "lucide-react";
+import SKTextInput from '../elements/SKTextInput';
 
 interface Data {
     label: string;
@@ -31,7 +32,7 @@ const AddEditFinanceDataForm = ({ onSubmit, ref, editData }) => {
     }
 
     return (
-        <div className="mb-8 space-y-4">
+        <div className="mb-4 space-y-4">
             <div className="flex gap-4">
                 <input
                     type="text"
@@ -40,14 +41,17 @@ const AddEditFinanceDataForm = ({ onSubmit, ref, editData }) => {
                     value={data.label}
                     onChange={(e) => handleChange('label', e.target.value)}
                     required
-                    className="px-4 py-2 border border-gray-300 rounded-md w-1/2"
+                    className="px-2 py-1 border border-gray-300 rounded-md w-1/2"
                 />
+                <SKTextInput
+                tabType='income'
+                 />
                 <input
                     type="text"
                     placeholder="Note"
                     value={data.note}
                     onChange={(e) => handleChange('note', e.target.value)}
-                    className="px-4 py-2 border border-gray-300 rounded-md w-1/2"
+                    className="px-2 py-1 border border-gray-300 rounded-md w-1/2"
                 />
                 <button
                     onClick={() => handleSubmit()}
