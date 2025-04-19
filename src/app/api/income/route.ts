@@ -7,8 +7,7 @@ export async function GET() {
   await connectDB();
   try {
     const items = await IncomeSchema.find().sort({ amount: 1 }); // sort alphabetically
-    console.log("items", items);
-    return NextResponse.json({ data: items }, { status: 200 });
+    return NextResponse.json({ data: items, message: "Received incomes." }, { status: 200 });
   } catch (err: unknown) {
     const errorMessage =
       err instanceof Error ? err.message : "Unknown error occurred";
@@ -44,7 +43,7 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(
-      { data: { _id, message: "Income item created" } },
+      { data: { _id }, message: "Income item created" },
       { status: 201 }
     );
   } catch (err: unknown) {

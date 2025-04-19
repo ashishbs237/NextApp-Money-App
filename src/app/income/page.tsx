@@ -24,12 +24,12 @@ const Page = () => {
   useEffect(() => {
     (async () => {
       const res = await getIncomeLabels();
-      setSavedLabels(res.map((item: { label: string }) => item?.label));
+      setSavedLabels(res.data.map((item: { label: string }) => item?.label));
     })();
 
     (async () => {
       const res = await getIncomeList();
-      setIncomeList(res);
+      setIncomeList(res.data);
     })();
   }, [])
 
@@ -73,7 +73,6 @@ const Page = () => {
         }))
       } else {
         const res = await createIncome(payload);
-        console.log("Res : ", res._id);
         successToast(res.message);
 
         // update loacal list
@@ -112,7 +111,7 @@ const Page = () => {
 
       const isLabelUsed = incomeList.some((item: IIncomeItem) => item._id !== incomeItem?._id && item?.label?.toLowerCase() === (customLabel || label)?.toLowerCase());
       if (isLabelUsed) {
-        setInformation('Label already used. Please use a different label.');
+        errorToast('Label already used. Please use a different label.');
         return;
       }
 
