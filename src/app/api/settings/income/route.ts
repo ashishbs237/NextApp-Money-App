@@ -8,7 +8,7 @@ export async function GET() {
 
   try {
     const labels = await IncomeLabel.find().sort({ label: 1 }); // sort alphabetically
-    return NextResponse.json({ data: labels }, { status: 200 });
+    return NextResponse.json({ data: labels, message: 'Received all income label.' }, { status: 200 });
   } catch (err: unknown) {
     const errorMessage =
       err instanceof Error ? err.message : "Unknown error occurred";
@@ -34,10 +34,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const newLabel = await IncomeLabel.create({ label, note });
+    const { _id } = await IncomeLabel.create({ label, note });
 
     return NextResponse.json(
-      { data: { ...newLabel, message: "Income label created" } },
+      { data: { _id }, message: "Income label created" },
       { status: 201 }
     );
   } catch (err: unknown) {

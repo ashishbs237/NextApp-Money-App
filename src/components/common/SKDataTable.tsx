@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 type RowData = {
-    _id: string | number;
+    _id?: string | number;
     [key: string]: any;
 };
 

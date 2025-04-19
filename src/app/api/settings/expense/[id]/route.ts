@@ -22,7 +22,7 @@ export async function PUT(
 
         const updated = await ExpenseLabel.findByIdAndUpdate(
             id,
-            { label, note },
+            { label: label, note },
             { new: true }
         );
 
@@ -34,7 +34,7 @@ export async function PUT(
         }
 
         return NextResponse.json(
-            { message: "Expense label updated", data: updated },
+            { data: { _id: updated._id }, message: "Expense label updated" },
             { status: 200 }
         );
     } catch (err: unknown) {
@@ -66,7 +66,7 @@ export async function DELETE(
         }
 
         return NextResponse.json({
-            data: { ...deleted, message: "Expense label deleted" },
+            data: { _id: deleted._id }, message: "Expense label deleted",
             status: 200,
         });
     } catch (err: unknown) {

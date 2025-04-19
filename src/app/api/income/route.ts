@@ -37,14 +37,14 @@ export async function POST(request: Request) {
       );
     }
 
-    const newItem = await IncomeSchema.create({
+    const { _id } = await IncomeSchema.create({
       label,
       amount,
       yearlyIncrement,
     });
 
     return NextResponse.json(
-      { data: { ...newItem, message: "Income item created" } },
+      { data: { _id, message: "Income item created" } },
       { status: 201 }
     );
   } catch (err: unknown) {

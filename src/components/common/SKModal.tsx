@@ -1,28 +1,34 @@
+'use client';
+
 import React from 'react';
+import { TAB_COLORS } from '@/components/constants/colors';
 
-type SKModalProps = {
-    open: boolean;
-    title: string;
+interface CommonModalProps {
+    visible: boolean;
     onClose: () => void;
-    onSave: () => void;
-    saveButtonText?: string;
+    title: string;
     children: React.ReactNode;
-};
+    onSave?: () => void;
+    saveButtonText?: string;
+    tabType?: string;
+}
 
-const SKModal: React.FC<SKModalProps> = ({
-    open,
-    title,
+export default function CommonModal({
+    visible,
     onClose,
+    title,
+    children,
     onSave,
     saveButtonText = 'Save',
-    children,
-}) => {
-    if (!open) return null;
+    tabType = 'income',
+}: CommonModalProps) {
+    const tabColor = TAB_COLORS[tabType] || { background: '#000', text: '#fff' };
+
+    if (!visible) return null;
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 ">
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-                {/* Header */}
+            <div className="w-[85%] max-w-md bg-white rounded-xl p-6">
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-xl font-semibold">{title}</h2>
                     <button
@@ -32,28 +38,26 @@ const SKModal: React.FC<SKModalProps> = ({
                         ✕
                     </button>
                 </div>
-
-                {/* Modal Body */}
-                <div className="space-y-4">{children}</div>
-
-                {/* Footer Actions */}
-                <div className="flex justify-end gap-3 mt-6">
+                <div>{children}</div>
+                <div className="flex justify-between mt-6 gap-2">
+                    {onSave && (
+                        <button
+                            onClick={onSave}
+                            className="flex-1 px-4 py-2 rounded-md font-semibold"
+                            style={{ backgroundColor: tabColor.background, color: tabColor.text }}
+                        >
+                            {saveButtonText}
+                        </button>
+                    )}
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-sm"
+                        className="flex-1 px-4 py-2 rounded-md font-semibold border"
+                        style={{ borderColor: tabColor.background, color: tabColor.background }}
                     >
                         Cancel
-                    </button>
-                    <button
-                        onClick={onSave}
-                        className="px-4 py-2 rounded bg-[var(--accent)] text-white hover:opacity-90 text-sm"
-                    >
-                        {saveButtonText}
                     </button>
                 </div>
             </div>
         </div>
     );
-};
-
-export default SKModal;
+}

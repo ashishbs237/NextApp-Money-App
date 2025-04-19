@@ -5,14 +5,14 @@ import { useEffect, useRef, useState } from 'react';
 import BlockingLoader from '@/components/common/BlockingLoader';
 import ConfirmationDialog from '@/components/common/ConfirmationDialog';
 import AddEditFinanceDataForm from '@/components/common/AddEditFinanceDataForm';
-import { toast } from 'react-toastify';
 import { useToast } from '@/hooks/useToast';
 import FinanceDataList from '@/components/common/FinanceDataList';
 import { IFinanceLabel } from "@/types/settings"
-import { ApiResponse, IConfirmatinDialogAction } from "@/types/common"
+import { IConfirmatinDialogAction } from "@/types/common"
 import SKHeader from '@/components/common/Header';
+import { formatText } from '@/utils/functions';
 
-export default function EMISettings() {
+export default function IncomeSettings() {
   const { successToast, errorToast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const [labels, setLabels] = useState<IFinanceLabel[]>([]);
@@ -27,21 +27,23 @@ export default function EMISettings() {
     try {
       setLoadingCount((prev) => prev + 1);
       const res = await getEMILabels();
-      setLabels(res);
+      if (res) {
+        setLabels(res.data);
+        successToast(res?.message)
+      }
     } catch (err) {
-      console.error(err)
+      errorToast(err);
     } finally {
       setLoadingCount((prev) => prev - 1);
     }
+
   };
 
   const handleSubmit = async ({ label, note }) => {
 
-    // check duplication
     const isDuplicate = labels.some(
       (item) =>
-        item.label.toLowerCase() === label.toLowerCase() &&
-        item._id !== action?.data?._id
+        item._id !== action?.data?._id && item?.label?.toLowerCase() === label.toLowerCase()
     );
 
     if (isDuplicate) {
@@ -51,11 +53,20 @@ export default function EMISettings() {
 
     try {
       setLoadingCount((count) => count + 1);
-      let res: ApiResponse<IFinanceLabel>;
+      let res;
+      const payload = {
+        label: formatText(label),
+        note: formatText(note)
+      }
       if (action?.data?._id) {
-        res = await updateEMILabel(action?.data?._id, { label, note });
+        res = await updateEMILabel(action?.data?._id, payload);
+        setLabels(labels.map((e) => {
+          return e._id === res?.data?._id ? { _id: res?.data?._id, ...payload } : e
+        }))
+
       } else {
-        res = await createEMILabel({ label, note });
+        res = await createEMILabel(payload);
+        setLabels([...labels, { _id: res?.data._id, ...payload }])
       }
       successToast(res?.message)
     } catch (err) {
@@ -64,21 +75,17 @@ export default function EMISettings() {
       setLoadingCount((count) => count - 1);
       inputRef.current?.focus();
     }
-    fetchLabels();
   };
 
 
   const handleDelete = async () => {
     try {
-      setLoadingCount((count) => count + 1)
-      const res: ApiResponse<IFinanceLabel> = await deleteEMILabel(action?.data?._id);
-      toast.success(res.message)
-    } catch (err: unknown) {
-      console.error(err)
-    } finally {
-      setLoadingCount((count) => count - 1)
+      const res = await deleteEMILabel(action?.data?._id);
+      successToast(res.message);
+      setLabels(labels.filter((e) => e._id !== res.data._id))
+    } catch (err) {
+      errorToast(err)
     }
-    fetchLabels();
   };
 
   const handleOk = () => {
@@ -116,7 +123,7 @@ export default function EMISettings() {
         onClose={() => handleOk()}
         open={action?.command === 'info'}
         variant='info'
-        information="EMI label already exists."
+        information="Income label already exists."
       />
 
     </div>

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import dbConnect from "@/lib/connectDB";
-import EMILabel from "@/models//EMILabel";
+import EMILabel from "@/models/EMILabel";
 
 export async function PUT(
     request: Request,
@@ -22,7 +22,7 @@ export async function PUT(
 
         const updated = await EMILabel.findByIdAndUpdate(
             id,
-            { label, note },
+            { label: label, note },
             { new: true }
         );
 
@@ -34,7 +34,7 @@ export async function PUT(
         }
 
         return NextResponse.json(
-            { message: "EMI label updated", data: updated },
+            { data: { _id: updated._id }, message: "EMI label updated" },
             { status: 200 }
         );
     } catch (err: unknown) {
@@ -66,7 +66,7 @@ export async function DELETE(
         }
 
         return NextResponse.json({
-            data: { ...deleted, message: "EMI label deleted" },
+            data: { _id: deleted._id }, message: "EMI label deleted",
             status: 200,
         });
     } catch (err: unknown) {

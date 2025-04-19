@@ -1,6 +1,7 @@
 import { ToastContainer } from 'react-toastify';
 import './globals.css';
 import Link from 'next/link';
+import GetIcons from '@/components/common/GetIcons';
 
 export const metadata = {
   title: 'MoneyMap',
@@ -35,14 +36,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <ToastContainer
                 position="top-right"
                 autoClose={1500}
-                hideProgressBar={false}
+                hideProgressBar={true}
                 newestOnTop={false}
-                closeOnClick={false}
+                closeOnClick={true}
                 rtl={false}
-                pauseOnFocusLoss
-                draggable
                 pauseOnHover
                 theme="light"
+
               // transition={Bounce}
               />
               <section className="space-y-6">
@@ -63,6 +63,7 @@ function SidebarLink({ href, label }: { href: string; label: string }) {
       href={href}
       className="px-3 py-2 rounded-lg hover:bg-[var(--sidebar-link-hover)] transition-colors duration-150"
     >
+      {/* <GetIcons screenName={label} color={"red"} size={20} /> */}
       {label}
     </Link>
   );

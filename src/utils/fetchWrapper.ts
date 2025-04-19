@@ -10,7 +10,7 @@ async function handleResponse(response) {
     const error = data?.message || response.statusText;
     throw new Error(error);
   }
-  return data.data;
+  return data;
 }
 
 const fetchWrapper = {

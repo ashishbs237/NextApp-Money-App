@@ -8,7 +8,7 @@ export async function GET() {
 
     try {
         const labels = await EMILabel.find().sort({ label: 1 }); // sort alphabetically
-        return NextResponse.json({ data: labels }, { status: 200 });
+        return NextResponse.json({ data: labels, message: 'Received all EMI label.' }, { status: 200 });
     } catch (err: unknown) {
         const errorMessage =
             err instanceof Error ? err.message : "Unknown error occurred";
@@ -19,7 +19,7 @@ export async function GET() {
     }
 }
 
-// POST /api/settings/income-source
+// POST /api/settings/income-labels
 export async function POST(request: Request) {
     await dbConnect();
 
@@ -34,10 +34,10 @@ export async function POST(request: Request) {
             );
         }
 
-        const newLabel = await EMILabel.create({ label, note });
+        const { _id } = await EMILabel.create({ label, note });
 
         return NextResponse.json(
-            { data: { ...newLabel, message: "EMI label created" } },
+            { data: { _id }, message: "EMI label created" },
             { status: 201 }
         );
     } catch (err: unknown) {

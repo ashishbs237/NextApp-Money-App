@@ -34,7 +34,7 @@ export async function PUT(
     }
 
     return NextResponse.json(
-      { message: "Income label updated", data: updated },
+      { data: { _id: updated._id }, message: "Income label updated" },
       { status: 200 }
     );
   } catch (err: unknown) {
@@ -66,7 +66,7 @@ export async function DELETE(
     }
 
     return NextResponse.json({
-      data: { ...deleted, message: "Income label deleted" },
+      data: { _id: deleted._id }, message: "Income label deleted",
       status: 200,
     });
   } catch (err: unknown) {

@@ -6,20 +6,22 @@ import SKDataTable, { ColumnDefinition } from '@/components/common/SKDataTable'
 import SKModal from '@/components/common/SKModal'
 import { useToast } from '@/hooks/useToast'
 import { createIncomeLabel, getIncomeLabels } from '@/lib/apiFunctions/settingsAPI'
-import { createIncome, updateIncome, getIncomeList } from '@/lib/apiFunctions/incomeAPI'
+import { getIncomeList, createIncome, updateIncome, deleteIncome } from '@/lib/apiFunctions/incomeAPI'
 import { ActionType, IIncomeItem } from '@/types/common'
+import SKButton from '@/components/elements/SKButton'
 import React, { useEffect, useState } from 'react'
+import BlockingLoader from '@/components/common/BlockingLoader'
 
 const Page = () => {
-  const [incomeList, setIncomeList] = useState([]);
+  const [incomeList, setIncomeList] = useState<IIncomeItem[]>([]);
   const [action, setAction] = useState<ActionType>(null);
   const [incomeItem, setIncomeItem] = useState<IIncomeItem | null>();
   const [savedLabels, setSavedLabels] = useState<string[]>([]);
   const [information, setInformation] = useState<string>('');
   const { successToast, errorToast } = useToast();
+  const [loadingCount, setLoadingCount] = useState(0);
 
   useEffect(() => {
-
     (async () => {
       const res = await getIncomeLabels();
       setSavedLabels(res.map((item: { label: string }) => item?.label));
@@ -31,9 +33,10 @@ const Page = () => {
     })();
   }, [])
 
-
   const columns: ColumnDefinition[] = [
     { label: 'Amount', accessor: 'amount' },
+    { label: 'Label', accessor: 'label' },
+    { label: 'Yearly Increment', accessor: 'yearlyIncrement' },
     {
       label: 'Actions',
       accessor: 'actions',
@@ -58,25 +61,47 @@ const Page = () => {
     }
   }
 
-  const handleIncomeItem = async (payload: object) => {
+  const handleSaveItem = async (payload: object) => {
     try {
+      setLoadingCount((prev) => prev + 1)
       if (incomeItem?._id) {
-        await updateIncome(incomeItem?._id, payload);
-        successToast('Income updated successfully.');
+        const res = await updateIncome(incomeItem?._id, payload);
+        successToast(res.message);
+        // update loacal list
+        setIncomeList(incomeList.map((item: IIncomeItem) => {
+          return item._id === incomeItem._id ? incomeItem : item
+        }))
       } else {
-        await createIncome(payload);
-        successToast('Income created successfully.');
+        const res = await createIncome(payload);
+        console.log("Res : ", res._id);
+        successToast(res.message);
+
+        // update loacal list
+        setIncomeList([...incomeList, { _id: res._id, ...incomeItem }])
       }
       setAction(null);
     } catch (err) {
       errorToast(err)
+    } finally {
+      setLoadingCount((prev) => prev - 1)
     }
   }
 
+  const handleDeleteIncome = async () => {
+    try {
+      const res = await deleteIncome(incomeItem?._id)
+      successToast(res);
+      setIncomeList(incomeList.filter((e) => e._id !== incomeItem?._id))
+    } catch (err) {
+      errorToast(err)
+    } finally {
 
-  const handleSaveIncome = async () => {
+    }
+  }
+
+  const handleIncomeItem = async () => {
     const { amount, label, customLabel, yearlyIncrement } = incomeItem || {};
-    if (amount && yearlyIncrement && (customLabel || label)) {
+    if (amount && (customLabel || label)) {
 
       // check if label is already exists in the list
 
@@ -85,13 +110,13 @@ const Page = () => {
         createLabel(customLabel)
       }
 
-      const isLabelUsed = incomeList.some((item: { label: string }) => item.label.toLowerCase() === (customLabel || label)?.toLowerCase());
+      const isLabelUsed = incomeList.some((item: IIncomeItem) => item._id !== incomeItem?._id && item?.label?.toLowerCase() === (customLabel || label)?.toLowerCase());
       if (isLabelUsed) {
         setInformation('Label already used. Please use a different label.');
         return;
       }
 
-      handleIncomeItem({
+      handleSaveItem({
         amount: Number(amount),
         label: customLabel || label,
         yearlyIncrement
@@ -105,13 +130,12 @@ const Page = () => {
     // 
   }
 
-
   return (
     <>
       <SKHeader text={'Income List'}>
-        <button onClick={() => setAction('add')}>
+        <SKButton tabType='income' onClick={() => setAction('add')}>
           Add
-        </button>
+        </SKButton>
       </SKHeader>
       <SKDataTable
         columns={columns}
@@ -121,9 +145,9 @@ const Page = () => {
 
       {/* Add / Update Income Source */}
       <SKModal
-        open={action === 'add'}
+        visible={action === 'add'}
         onClose={() => setAction(null)}
-        onSave={() => handleSaveIncome()}
+        onSave={() => handleIncomeItem()}
         title={`${incomeItem?._id ? 'Update' : 'Save'} Income Entry`}
       >
         <div className="space-y-6 px-2 pt-1 pb-4">
@@ -191,7 +215,8 @@ const Page = () => {
         variant='delete'
         onClose={() => setAction(null)}
         open={action === 'delete'}
-        onConfirm={() => alert('deleted')}
+        onConfirm={() => handleDeleteIncome()}
+        information="Are you sure you want to delete this income entry?"
       />
 
       <ConfirmationDialog
@@ -201,6 +226,7 @@ const Page = () => {
         information={information}
         onConfirm={() => setInformation('')}
       />
+      <BlockingLoader show={loadingCount > 0} />
     </>
   );
 }
